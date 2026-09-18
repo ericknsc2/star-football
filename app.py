@@ -105,10 +105,12 @@ else:
 
   st.markdown("---")
 
+  # Criando as abas de navegação
   aba_visao, aba_treino, aba_partida = st.tabs(
       ["🏠 Visão Geral", "🏋️‍♂️ Centro de Treinamento", "⚽ Próxima Partida"]
   )
 
+  # --- ABA 1: VISÃO GERAL ---
   with aba_visao:
     st.subheader("📊 Perfil e Atributos do Atleta")
     st.write(
@@ -124,6 +126,7 @@ else:
       st.session_state.carreira_iniciada = False
       st.rerun()
 
+  # --- ABA 2: CENTRO DE TREINAMENTO ---
   with aba_treino:
     st.subheader("🏋️‍♂️ Evolução de Atributos")
     st.markdown(
@@ -138,20 +141,22 @@ else:
       )
     else:
       atrib_para_treinar = st.selectbox(
-          "Escolha o atributo para treinar:", list(jogador["atributos"].keys())
+          "Escolha o atributo para treinar:",
+          list(jogador["atributos"].keys()),
+          key="select_treino",
       )
 
-      if st.button("💪 Realizar Sessão de Treino"):
+      if st.button("💪 Realizar Sessão de Treino", key="btn_treinar"):
         jogador["energia"] -= 15
         ganho = random.randint(1, 3)
         jogador["atributos"][atrib_para_treinar] += ganho
         jogador["moral"] = min(100, jogador["moral"] + 2)
         st.success(
-            f"📈 Treino concluído! Seu atributo **{atrib_para_treinar}** subiu"
-            f" +{ganho} pontos!"
+            f"📈 Treino concluído com sucesso! Seu atributo"
+            f" **{atrib_para_treinar}** subiu +{ganho} pontos!"
         )
-        st.rerun()
 
+  # --- ABA 3: SIMULAÇÃO DE PARTIDA ---
   with aba_partida:
     st.subheader("🏟️ Dia de Jogo - Momento Decisivo")
 
@@ -160,11 +165,10 @@ else:
           "❌ Você está com a energia esgotada (< 20%) e o técnico te poupou"
           " do jogo. Descanse ou recupere energias!"
       )
-      if st.button("🛌 Descansar e Recuperar Energia"):
+      if st.button("🛌 Descansar e Recuperar Energia", key="btn_descansar"):
         jogador["energia"] = min(100, jogador["energia"] + 50)
         jogador["moral"] = min(100, jogador["moral"] + 5)
-        st.success("🔋 Você descansou e recuperou 50% de energia!")
-        st.rerun()
+        st.success("🔋 Você descansou e recuperou 50% de energia com sucesso!")
     else:
       st.markdown(
           "O jogo está empatado e a sua equipe chegou ao ataque. O técnico"
@@ -178,7 +182,7 @@ else:
             "🎯 **Opção 1: Finalizar em Cobertura / Chute Direto**\n\n*Usa sua"
             " Finalização e Agilidade.*"
         )
-        if st.button("Chutar ao Gol!"):
+        if st.button("Chutar ao Gol!", key="btn_chutar"):
           jogador["energia"] -= 20
           jogador["partidas_jogadas"] += 1
           chance = (
@@ -196,16 +200,16 @@ else:
             )
           else:
             st.error(
-                "😢 Você chutou forte, mas o goleiro defendeu espetacularmente!"
+                "😢 Você chutou forte, mas o goleiro adversário defendeu"
+                " espetacularmente!"
             )
-          st.rerun()
 
       with col_b:
         st.info(
             "👟 **Opção 2: Passe para o companheiro livre**\n\n*Usa seu Passe e"
             " Visão.*"
         )
-        if st.button("Tentar a Assistência"):
+        if st.button("Tentar a Assistência", key="btn_passe"):
           jogador["energia"] -= 20
           jogador["partidas_jogadas"] += 1
           chance = jogador["atributos"]["Passe"] / 100
@@ -222,4 +226,3 @@ else:
                 "⚠️ O zagueiro adversário leu a jogada e cortou o seu passe na"
                 " hora H."
             )
-          st.rerun()
